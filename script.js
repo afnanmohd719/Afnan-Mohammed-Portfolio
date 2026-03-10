@@ -94,4 +94,57 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Handle Contact Form Submission
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = 'Sending... <i class="fas fa-spinner fa-spin"></i>';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+
+            const formData = new FormData(contactForm);
+            
+            fetch(contactForm.action, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            }).then(() => {
+                // Success
+                contactForm.reset();
+                submitBtn.innerHTML = 'Message Sent! <i class="fas fa-check"></i>';
+                submitBtn.style.backgroundColor = '#10b981'; // Success green
+                submitBtn.style.color = '#fff';
+                submitBtn.style.opacity = '1';
+                
+                // Revert back after 3 seconds
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.style.backgroundColor = '';
+                    submitBtn.style.color = '';
+                    submitBtn.disabled = false;
+                }, 3000);
+            }).catch(error => {
+                // Error
+                console.error('Error submitting form', error);
+                submitBtn.innerHTML = 'Error! Try Again <i class="fas fa-exclamation-triangle"></i>';
+                submitBtn.style.backgroundColor = '#ef4444'; // Error red
+                submitBtn.style.color = '#fff';
+                submitBtn.style.opacity = '1';
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.style.backgroundColor = '';
+                    submitBtn.style.color = '';
+                    submitBtn.disabled = false;
+                }, 3000);
+            });
+        });
+    }
 });
